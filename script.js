@@ -57,30 +57,38 @@ const dom = {
   nameQuest: document.getElementById("nameQuest"),
   nameBuild: document.getElementById("nameBuild"),
   letterGrid: document.getElementById("letterGrid"),
+  wordHint: document.getElementById("wordHint"),
+  wordComplete: document.getElementById("wordComplete"),
   wishesQuest: document.getElementById("wishesQuest"),
   wishesGrid: document.getElementById("wishesGrid"),
+  wishesComplete: document.getElementById("wishesComplete"),
   wishCounter: document.getElementById("wishCounter")
 };
 
-const NAME_TARGET = ["Е", "К", "А", "Т", "Е", "Р", "И", "Н", "А"];
+const NAME_TARGET = ["Л", "О", "Х"];
+const WORD_HINTS = [
+  "Не-а, подумай как Катя 😎",
+  "Почти, но нет",
+  "Любимое слово где-то рядом..."
+];
 const WISHES = [
-  "вдохновение",
-  "радость",
-  "удача",
-  "смелость",
-  "улыбки",
-  "тепло",
-  "мечты",
-  "путешествия",
-  "открытия",
-  "спокойствие",
-  "друзья",
-  "энергия",
-  "красота момента",
-  "яркие эмоции",
-  "уверенность",
-  "чудеса",
-  "счастье"
+  "Желаю, чтобы каждый день приносил тебе повод улыбнуться.",
+  "Пусть впереди будет как можно больше приятных неожиданностей и счастливых моментов.",
+  "Пусть рядом всегда будут люди, рядом с которыми легко быть собой.",
+  "Желаю смело идти к своим мечтам и никогда не переставать верить в себя.",
+  "Пусть этот год подарит тебе множество моментов, которые захочется вспоминать снова и снова.",
+  "Пусть даже обычные дни находят способ становиться красивыми и особенными.",
+  "Желаю тебе спокойствия внутри и уверенности в каждом важном решении.",
+  "Пусть у тебя всегда будет энергия на то, что правда зажигает сердце.",
+  "Пусть маленькие чудеса случаются чаще, чем ты успеваешь их ждать.",
+  "Желаю встречать людей, которые берегут твоё настроение и ценят твою доброту.",
+  "Пусть в жизни будет больше тёплых разговоров, смешных историй и честных улыбок.",
+  "Желаю тебе красивых побед, лёгких шагов и ощущения, что всё получается.",
+  "Пусть каждый новый день приносит что-то, за что хочется сказать: вот это было классно.",
+  "Желаю, чтобы мечты становились планами, а планы постепенно превращались в реальность.",
+  "Пусть рядом будет много любви, поддержки и людей, с которыми спокойно на душе.",
+  "Желаю тебе сиять по-своему и никогда не сомневаться, что ты очень классная.",
+  "Пусть твои 17 будут яркими, добрыми, смешными и по-настоящему счастливыми."
 ];
 
 function pad(value) {
@@ -186,8 +194,9 @@ function completeStageOne() {
 }
 
 function completeNameQuest() {
+  dom.nameQuest.classList.add("complete");
   launchConfetti(true);
-  window.setTimeout(() => transitionToQuestStage(3), 700);
+  window.setTimeout(() => transitionToQuestStage(3), 2000);
 }
 
 function showSurprise() {
@@ -488,18 +497,32 @@ function burst(x, y, color, container = dom.stage) {
 function updateNameBuild() {
   const slots = dom.nameBuild.querySelectorAll("span");
   slots.forEach((slot, index) => {
+    const wasFilled = slot.classList.contains("filled");
+    const isFilled = index < state.nameIndex;
     slot.textContent = index < state.nameIndex ? NAME_TARGET[index] : "_";
+    slot.classList.toggle("filled", isFilled);
+    if (isFilled && !wasFilled) {
+      slot.classList.remove("flash");
+      void slot.offsetWidth;
+      slot.classList.add("flash");
+      window.setTimeout(() => slot.classList.remove("flash"), 620);
+    }
   });
 }
 
 function handleLetterClick(event) {
   const button = event.target.closest(".letter-tile");
-  if (!button || state.questStage !== 2 || button.classList.contains("collected")) return;
+  if (!button || state.questStage !== 2 || dom.nameQuest.classList.contains("complete")) return;
 
   const expected = NAME_TARGET[state.nameIndex];
   const selected = button.dataset.letter;
 
   if (selected !== expected) {
+    const hint = WORD_HINTS[Math.floor(Math.random() * WORD_HINTS.length)];
+    dom.wordHint.textContent = hint;
+    dom.wordHint.classList.remove("show");
+    void dom.wordHint.offsetWidth;
+    dom.wordHint.classList.add("show");
     button.classList.remove("wrong");
     void button.offsetWidth;
     button.classList.add("wrong");
@@ -507,9 +530,11 @@ function handleLetterClick(event) {
     return;
   }
 
-  button.classList.add("collected");
+  button.classList.add("collected", "correct");
   state.nameIndex += 1;
   updateNameBuild();
+  dom.wordHint.textContent = state.nameIndex < NAME_TARGET.length ? "Да-да, вот оно ✨" : "";
+  dom.wordHint.classList.toggle("show", state.nameIndex < NAME_TARGET.length);
   burst(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2, "#FFD9EC", dom.nameQuest);
   playCollectSound(true);
 
@@ -520,15 +545,35 @@ function handleLetterClick(event) {
 
 function setupWishes() {
   dom.wishesGrid.innerHTML = "";
+  dom.wishesQuest.classList.remove("all-opened");
+  dom.wishesComplete?.classList.remove("show");
   WISHES.forEach((wish, index) => {
     const button = document.createElement("button");
-    button.className = "wish-box";
+    button.className = `wish-box wish-box-${(index % 6) + 1}`;
     button.type = "button";
     button.dataset.index = String(index);
     button.setAttribute("aria-label", `Открыть пожелание ${index + 1}`);
 
+    const lid = document.createElement("span");
+    lid.className = "wish-lid";
+
+    const ribbon = document.createElement("span");
+    ribbon.className = "wish-ribbon";
+
+    const bow = document.createElement("span");
+    bow.className = "wish-bow";
+
+    const glow = document.createElement("span");
+    glow.className = "wish-glow";
+
+    const sparkle = document.createElement("span");
+    sparkle.className = "wish-sparkles";
+
     const label = document.createElement("span");
+    label.className = "wish-text";
     label.textContent = wish;
+
+    button.append(lid, ribbon, bow, glow, sparkle);
     button.appendChild(label);
     dom.wishesGrid.appendChild(button);
   });
@@ -536,7 +581,7 @@ function setupWishes() {
 }
 
 function updateWishCounter() {
-  dom.wishCounter.textContent = `Открыто ${state.openedWishes.size} из ${WISHES.length}`;
+  dom.wishCounter.innerHTML = `<span>Открыто подарков</span><strong>${state.openedWishes.size} / ${WISHES.length}</strong>`;
 }
 
 function handleWishClick(event) {
@@ -552,8 +597,11 @@ function handleWishClick(event) {
   playCollectSound(true);
 
   if (state.openedWishes.size >= WISHES.length) {
+    dom.wishesQuest.classList.add("all-opened");
+    dom.wishesComplete?.classList.add("show");
     launchConfetti(true);
-    window.setTimeout(showSurprise, 900);
+    window.setTimeout(() => launchConfetti(true), 720);
+    window.setTimeout(showFinale, 2500);
   }
 }
 

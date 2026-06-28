@@ -105,7 +105,7 @@
       <div class="section-shell">
         <div class="quest-progress" id="questProgress" aria-label="Прогресс birthday quest">
           <span class="active" data-step="1">Этап 1/3</span>
-          <span data-step="2">Этап 2/3</span>
+          <span data-step="2">Этап 2/3 — Собери своё любимое слово</span>
           <span data-step="3">Этап 3/3</span>
           <span data-step="final">Финал</span>
         </div>
@@ -139,30 +139,49 @@
 
         <div class="quest-panel name-quest glass" id="nameQuest" aria-labelledby="nameQuestTitle">
           <p class="eyebrow">Этап 2/3</p>
-          <h2 id="nameQuestTitle">Собери своё имя</h2>
-          <p>Нажимай буквы в правильном порядке и собери своё полное имя ✨</p>
-          <div class="name-build" id="nameBuild" aria-live="polite">
-            <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
-          </div>
-          <div class="letter-grid" id="letterGrid" aria-label="Буквы имени">
-            <button class="letter-tile" type="button" data-letter="Т">Т</button>
-            <button class="letter-tile" type="button" data-letter="Е">Е</button>
-            <button class="letter-tile" type="button" data-letter="А">А</button>
-            <button class="letter-tile" type="button" data-letter="И">И</button>
+          <h2 id="nameQuestTitle">Собери своё любимое слово</h2>
+          <p>На экране много букв. Внизу есть только 3 пустые ячейки. Нужно догадаться, какое слово нужно собрать.</p>
+          <div class="letter-sky" id="letterGrid" aria-label="Буквы для любимого слова">
+            <button class="letter-tile" type="button" data-letter="Л">Л</button>
+            <button class="letter-tile" type="button" data-letter="О">О</button>
+            <button class="letter-tile" type="button" data-letter="Х">Х</button>
             <button class="letter-tile" type="button" data-letter="К">К</button>
-            <button class="letter-tile" type="button" data-letter="Р">Р</button>
-            <button class="letter-tile" type="button" data-letter="Н">Н</button>
-            <button class="letter-tile" type="button" data-letter="Е">Е</button>
             <button class="letter-tile" type="button" data-letter="А">А</button>
+            <button class="letter-tile" type="button" data-letter="Т">Т</button>
+            <button class="letter-tile" type="button" data-letter="Я">Я</button>
+            <button class="letter-tile" type="button" data-letter="Д">Д</button>
+            <button class="letter-tile" type="button" data-letter="Р">Р</button>
+            <button class="letter-tile" type="button" data-letter="У">У</button>
+            <button class="letter-tile" type="button" data-letter="Г">Г</button>
+            <button class="letter-tile" type="button" data-letter="З">З</button>
+            <button class="letter-tile" type="button" data-letter="В">В</button>
+            <button class="letter-tile" type="button" data-letter="Е">Е</button>
+            <button class="letter-tile" type="button" data-letter="Н">Н</button>
+            <button class="letter-tile" type="button" data-letter="А">А</button>
+            <button class="letter-tile" type="button" data-letter="С">С</button>
+            <button class="letter-tile" type="button" data-letter="М">М</button>
+          </div>
+          <div class="name-build" id="nameBuild" aria-live="polite">
+            <span>_</span><span>_</span><span>_</span>
+          </div>
+          <p class="word-hint" id="wordHint" aria-live="polite">Любимое слово где-то рядом...</p>
+          <div class="word-complete" id="wordComplete" aria-live="polite">
+            <h3>Ахах, ну конечно 😭</h3>
+            <p>Слово собрано: <strong>ЛОХ</strong></p>
+            <span>Официально: это было слишком легко.</span>
           </div>
         </div>
 
         <div class="quest-panel wishes-quest glass" id="wishesQuest" aria-labelledby="wishesQuestTitle">
           <p class="eyebrow">Этап 3/3</p>
           <h2 id="wishesQuestTitle">17 пожеланий для тебя</h2>
-          <p>Открой все коробочки — внутри маленькие пожелания именно для тебя.</p>
-          <div class="wish-counter" id="wishCounter" aria-live="polite">Открыто 0 из 17</div>
+          <p>Открой все подарки в волшебной комнате — в каждом спрятано отдельное пожелание именно для тебя.</p>
+          <div class="wish-counter" id="wishCounter" aria-live="polite">
+            <span>Открыто подарков</span>
+            <strong>0 / 17</strong>
+          </div>
           <div class="wishes-grid" id="wishesGrid" aria-label="17 пожеланий"></div>
+          <div class="wishes-complete" id="wishesComplete" aria-live="polite">✨ Все подарки открыты! ✨</div>
         </div>
       </div>
     </section>
@@ -198,11 +217,21 @@
         <p class="eyebrow">Подарок открыт</p>
         <h2 id="finalTitle">Катя, с Днём рождения! 🎉</h2>
         <p class="birthday-text">
-          Поздравляю тебя с Днём рождения! Хоть мы с тобой знакомы не так давно, ты уже стала для меня очень хорошим другом, с которой мне правда нравится проводить время. Оставайся такой же толстенькой, доброй, жизнерадостной, искренней и светлой. Пусть в твои 17 лет будет больше поводов улыбаться, спокойных и тёплых дней, классных людей рядом, неожиданных радостей и моментов, которые потом хочется вспоминать. Ты очень хороший человек, и я рад, что мы познакомились. С 17-летием! 🎂✨
+          Хоть мы с тобой знакомы не так давно, ты уже успела стать для меня действительно близким другом. Если честно, за всю жизнь я всего трёх человек называл друзьями, и ты — одна из них. Для меня это многое значит.
+          <br><br>
+          Спасибо тебе за все наши разговоры, за время, которое мы проводим вместе, и за то, что рядом с тобой всегда легко и комфортно. Оставайся такой же доброй, искренней, жизнерадостной и светлой.
+          <br><br>
+          Желаю, чтобы у тебя всё получилось именно так, как ты этого хочешь. Пусть впереди будет много счастливых моментов, ярких эмоций, классных людей рядом и поводов улыбаться.
+          <br><br>
+          Отдельно хочу пожелать тебе удачи с поступлением. Очень надеюсь, что ты попадёшь именно в тот вуз, о котором мечтаешь. Верю, что у тебя всё получится и ты добьёшься того, к чему стремишься.
+          <br><br>
+          Пусть 17 лет станут началом нового, интересного этапа жизни, полного приятных сюрпризов, новых возможностей и незабываемых воспоминаний.
+          <br><br>
+          Ещё раз с Днём рождения! 🎂✨
         </p>
         <p class="postscript">⭐ P.S. Нажми 5 раз на подарок.</p>
         <div class="secret-message" id="secretMessage" aria-live="polite">
-          Иногда самые ценные подарки — это люди, которые остаются рядом. Спасибо за твою дружбу. Пусть впереди будет ещё много счастливых моментов.
+          Надеюсь, тебе понравилось моё поздравление :) Спасибо, что ты есть ✨
         </div>
       </div>
     </section>
