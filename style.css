@@ -679,6 +679,18 @@ h2 {
   animation: buttonGlow 2.8s ease-in-out infinite alternate;
 }
 
+.start-quest-button {
+  margin-top: 8px;
+  opacity: 0;
+  transform: translateY(12px) scale(0.94);
+}
+
+.start-quest-button.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  animation: startQuestIn 0.68s var(--ease) both, buttonGlow 2.8s ease-in-out infinite alternate;
+}
+
 .primary-button {
   background: linear-gradient(135deg, var(--rose), var(--purple), var(--violet));
   box-shadow: 0 14px 34px rgba(249, 197, 255, 0.24), inset 0 1px 0 rgba(255,255,255,0.28);
@@ -1340,6 +1352,27 @@ h2 {
   animation: particlePop 0.7s var(--ease) forwards;
 }
 
+.cursor-heart {
+  position: fixed;
+  z-index: 12;
+  left: 0;
+  top: 0;
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  color: #ffd9ec;
+  font-size: 1.15rem;
+  font-weight: 900;
+  text-shadow:
+    0 0 10px rgba(255,217,236,0.8),
+    0 0 24px rgba(249,197,255,0.48),
+    0 0 34px rgba(255,209,102,0.24);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: cursorHeartFloat 0.9s var(--ease) forwards;
+}
+
 .game-section,
 .finale,
 .surprise {
@@ -1811,6 +1844,19 @@ h2 {
   }
 }
 
+@keyframes startQuestIn {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(16px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes cardSway {
   0%, 100% { transform: rotate(-0.25deg) translateY(0); }
   50% { transform: rotate(0.25deg) translateY(-4px); }
@@ -2011,6 +2057,23 @@ h2 {
   to {
     opacity: 0;
     transform: translate(var(--dx), var(--dy)) scale(0.1);
+  }
+}
+
+@keyframes cursorHeartFloat {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translate(-50%, -50%) scale(0.55) rotate(0deg);
+  }
+  18% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translate(calc(-50% + var(--trail-x)), calc(-50% + var(--trail-y))) scale(1.22) rotate(var(--trail-rotate));
   }
 }
 

@@ -2,7 +2,7 @@
 
 const CONFIG = {
   // Для проверки квеста таймер стартует заново при каждом открытии сайта.
-  countdownDurationMs: 160000,
+  countdownDurationMs: 10000,
   winningScore: 10,
   autoUnlockForPreview: false
 };
@@ -24,6 +24,7 @@ const state = {
   questStage: 1,
   nameIndex: 0,
   countdownTargetAt: null,
+  lastTrailAt: 0,
   openedWishes: new Set()
 };
 
@@ -123,7 +124,7 @@ function updateCountdown() {
     setTimeValue(dom.hours, 0);
     setTimeValue(dom.minutes, 0);
     setTimeValue(dom.seconds, 0);
-    unlockGame();
+    showStartQuestButton();
     return true;
   }
 
@@ -138,6 +139,12 @@ function updateCountdown() {
   setTimeValue(dom.minutes, minutes);
   setTimeValue(dom.seconds, seconds);
   return false;
+}
+
+function showStartQuestButton() {
+  if (!dom.previewGameButton) return;
+  dom.previewGameButton.hidden = false;
+  dom.previewGameButton.classList.add("visible");
 }
 
 function unlockGame() {
@@ -229,6 +236,31 @@ function setupParallax() {
     const y = (event.clientY / window.innerHeight - 0.5) * 38;
     document.documentElement.style.setProperty("--mx", `${x}px`);
     document.documentElement.style.setProperty("--my", `${y}px`);
+  }, { passive: true });
+}
+
+function setupCursorTrail() {
+  const symbols = ["♡", "♥", "✦", "✨"];
+
+  window.addEventListener("pointermove", (event) => {
+    const waitingForCountdown = dom.hero.classList.contains("active-section")
+      && !dom.game.classList.contains("active-section");
+    const now = performance.now();
+
+    if (!waitingForCountdown || now - state.lastTrailAt < 48) return;
+    state.lastTrailAt = now;
+
+    const heart = document.createElement("span");
+    heart.className = "cursor-heart";
+    heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    heart.style.left = `${event.clientX}px`;
+    heart.style.top = `${event.clientY}px`;
+    heart.style.setProperty("--trail-x", `${(Math.random() - 0.5) * 42}px`);
+    heart.style.setProperty("--trail-y", `${-34 - Math.random() * 34}px`);
+    heart.style.setProperty("--trail-rotate", `${(Math.random() - 0.5) * 48}deg`);
+
+    document.body.appendChild(heart);
+    window.setTimeout(() => heart.remove(), 900);
   }, { passive: true });
 }
 
@@ -808,6 +840,7 @@ function init() {
   setupPreloader();
   setupReveal();
   setupParallax();
+  setupCursorTrail();
   setupSpaceCanvas();
   setupWishes();
   updateNameBuild();
