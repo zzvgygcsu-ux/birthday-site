@@ -1,8 +1,8 @@
 "use strict";
 
 const CONFIG = {
-  // Поменяй дату на настоящую: год-месяц-день T часы:минуты:секунды + часовой пояс.
-  birthdayAt: "2026-06-30T00:00:00+03:00",
+  // Для проверки квеста таймер стартует заново при каждом открытии сайта.
+  countdownDurationMs: 160000,
   winningScore: 10,
   autoUnlockForPreview: false
 };
@@ -23,6 +23,7 @@ const state = {
   easterClicks: 0,
   questStage: 1,
   nameIndex: 0,
+  countdownTargetAt: null,
   openedWishes: new Set()
 };
 
@@ -111,7 +112,10 @@ function setTimeValue(element, value) {
 
 function updateCountdown() {
   const now = Date.now();
-  const target = new Date(CONFIG.birthdayAt).getTime();
+  if (!state.countdownTargetAt) {
+    state.countdownTargetAt = now + CONFIG.countdownDurationMs;
+  }
+  const target = state.countdownTargetAt;
   const distance = target - now;
 
   if (distance <= 0 || CONFIG.autoUnlockForPreview) {
@@ -372,7 +376,7 @@ function setupGameControls() {
   dom.startButton.addEventListener("click", startGame);
   dom.resetButton.addEventListener("click", resetGame);
   dom.soundButton.addEventListener("click", toggleSound);
-  dom.previewGameButton.addEventListener("click", unlockGame);
+  dom.previewGameButton?.addEventListener("click", unlockGame);
   dom.surpriseButton.addEventListener("click", showFinale);
   dom.musicToggle.addEventListener("click", toggleMusic);
   dom.finalGift.addEventListener("click", () => openGift(true));
