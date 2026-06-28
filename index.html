@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1C1230">
+  <title>Катя, с Днём рождения</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="loading">
+  <div class="preloader" id="preloader" aria-live="polite">
+    <div class="preloader-core">
+      <span class="preloader-spark">✨</span>
+      <span>Готовим подарок...</span>
+    </div>
+  </div>
+
+  <canvas id="spaceCanvas" class="space-canvas" aria-hidden="true"></canvas>
+
+  <div class="world" id="world">
+    <div class="aurora aurora-a" aria-hidden="true"></div>
+    <div class="aurora aurora-b" aria-hidden="true"></div>
+    <div class="nebula nebula-a" aria-hidden="true"></div>
+    <div class="nebula nebula-b" aria-hidden="true"></div>
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="milky-way" aria-hidden="true"></div>
+    <div class="shooting-stars" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="mountains mountains-back" aria-hidden="true"></div>
+    <div class="mountains mountains-front" aria-hidden="true"></div>
+    <div class="lake" aria-hidden="true"></div>
+    <div class="horizon-glow" aria-hidden="true"></div>
+  </div>
+
+  <div class="magic-transition" id="magicTransition" aria-hidden="true">
+    <div class="transition-flash"></div>
+    <div class="transition-ring"></div>
+    <div class="transition-particles">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <button class="music-toggle" id="musicToggle" type="button" aria-label="Включить музыку">🔈 Включить музыку</button>
+
+  <header class="topbar">
+    <a class="brand" href="#hero" aria-label="Наверх">
+      <span class="brand-mark">✦</span>
+      <span>🌸 17 лет магии</span>
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#hero">Таймер</a>
+      <a href="#game">Игра</a>
+      <a href="#finale">Финал</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero section active-section" id="hero" data-section="countdown">
+      <div class="hero-orbit hero-orbit-left" aria-hidden="true">🎁</div>
+      <div class="hero-orbit hero-orbit-right" aria-hidden="true">⭐</div>
+      <div class="floating-decor decor-balloon decor-balloon-left" aria-hidden="true">🎈</div>
+      <div class="floating-decor decor-balloon decor-balloon-right" aria-hidden="true">🎈</div>
+      <div class="floating-decor decor-gift" aria-hidden="true">🎁</div>
+      <div class="floating-decor decor-star" aria-hidden="true">✦</div>
+      <div class="floating-decor decor-spark" aria-hidden="true">✨</div>
+
+      <div class="hero-content reveal">
+        <p class="eyebrow">Космический отсчет</p>
+        <h1>До твоего <span>дня рождения</span> осталось</h1>
+
+        <div class="timer-card glass" id="timerCard" aria-live="polite">
+          <div class="time-unit">
+            <strong id="days">00</strong>
+            <span>дней</span>
+          </div>
+          <div class="time-unit">
+            <strong id="hours">00</strong>
+            <span>часов</span>
+          </div>
+          <div class="time-unit">
+            <strong id="minutes">00</strong>
+            <span>минут</span>
+          </div>
+          <div class="time-unit">
+            <strong id="seconds">00</strong>
+            <span>секунд</span>
+          </div>
+        </div>
+
+        <p class="subline">Самый важный день уже совсем скоро ✨</p>
+        <button class="ghost-button" id="previewGameButton" type="button">Посмотреть игру</button>
+      </div>
+    </section>
+
+    <section class="game-section section" id="game" data-section="game" aria-labelledby="gameTitle">
+      <div class="section-shell">
+        <div class="quest-progress" id="questProgress" aria-label="Прогресс birthday quest">
+          <span class="active" data-step="1">Этап 1/3</span>
+          <span data-step="2">Этап 2/3</span>
+          <span data-step="3">Этап 3/3</span>
+          <span data-step="final">Финал</span>
+        </div>
+
+        <div class="section-copy reveal">
+          <p class="eyebrow">Этап 1/3</p>
+          <h2 id="gameTitle">Собери 10 искр для своего праздника</h2>
+          <p>Лови подарки и звезды, пропускай пустые коробки. Когда ты наберёшь 10 очков, откроется следующий этап.</p>
+        </div>
+
+        <div class="game-wrap glass reveal">
+          <div class="game-hud">
+            <div>
+              <span>Счет</span>
+              <strong id="score">0</strong>
+            </div>
+            <div>
+              <span>Цель</span>
+              <strong>10</strong>
+            </div>
+            <button class="icon-button" id="soundButton" type="button" aria-label="Включить звук" title="Звук">♪</button>
+          </div>
+          <div class="game-stage" id="gameStage" role="application" aria-label="Мини-игра: ловите подарки и звезды">
+            <div class="catcher" id="catcher">🎁</div>
+          </div>
+          <div class="game-actions">
+            <button class="primary-button" id="startGameButton" type="button">Начать игру</button>
+            <button class="secondary-button" id="resetGameButton" type="button">Заново</button>
+          </div>
+        </div>
+
+        <div class="quest-panel name-quest glass" id="nameQuest" aria-labelledby="nameQuestTitle">
+          <p class="eyebrow">Этап 2/3</p>
+          <h2 id="nameQuestTitle">Собери своё имя</h2>
+          <p>Нажимай буквы в правильном порядке и собери своё полное имя ✨</p>
+          <div class="name-build" id="nameBuild" aria-live="polite">
+            <span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span>
+          </div>
+          <div class="letter-grid" id="letterGrid" aria-label="Буквы имени">
+            <button class="letter-tile" type="button" data-letter="Т">Т</button>
+            <button class="letter-tile" type="button" data-letter="Е">Е</button>
+            <button class="letter-tile" type="button" data-letter="А">А</button>
+            <button class="letter-tile" type="button" data-letter="И">И</button>
+            <button class="letter-tile" type="button" data-letter="К">К</button>
+            <button class="letter-tile" type="button" data-letter="Р">Р</button>
+            <button class="letter-tile" type="button" data-letter="Н">Н</button>
+            <button class="letter-tile" type="button" data-letter="Е">Е</button>
+            <button class="letter-tile" type="button" data-letter="А">А</button>
+          </div>
+        </div>
+
+        <div class="quest-panel wishes-quest glass" id="wishesQuest" aria-labelledby="wishesQuestTitle">
+          <p class="eyebrow">Этап 3/3</p>
+          <h2 id="wishesQuestTitle">17 пожеланий для тебя</h2>
+          <p>Открой все коробочки — внутри маленькие пожелания именно для тебя.</p>
+          <div class="wish-counter" id="wishCounter" aria-live="polite">Открыто 0 из 17</div>
+          <div class="wishes-grid" id="wishesGrid" aria-label="17 пожеланий"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="surprise section" id="surprise" data-section="surprise" aria-labelledby="surpriseTitle">
+      <div class="surprise-panel glass reveal">
+        <p class="eyebrow">Теплое пожелание</p>
+        <h2 id="surpriseTitle">Катя, пусть этот год будет особенным ✨</h2>
+        <p>
+          Пусть впереди будет больше поводов улыбаться, красивых моментов, интересных встреч, удачных совпадений и воспоминаний, которые захочется сохранить надолго.
+        </p>
+        <div class="surprise-grid" aria-label="Пожелания">
+          <span>⭐ вдохновение</span>
+          <span>🎈 радость</span>
+          <span>☄️ удача</span>
+          <span>✨ яркие эмоции</span>
+        </div>
+        <button class="primary-button surprise-button" id="surpriseButton" type="button">🎁 Открыть поздравление</button>
+      </div>
+    </section>
+
+    <section class="finale section" id="finale" data-section="finale" aria-labelledby="finalTitle">
+      <div class="finale-backdrop" aria-hidden="true"></div>
+      <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+      <div class="light-rays" aria-hidden="true"></div>
+
+      <div class="final-card glass reveal">
+        <button class="gift-box" id="finalGift" type="button" aria-label="Нажми на подарок">
+          <div class="gift-lid"></div>
+          <div class="gift-ribbon"></div>
+          <div class="gift-body"></div>
+        </button>
+        <p class="eyebrow">Подарок открыт</p>
+        <h2 id="finalTitle">Катя, с Днём рождения! 🎉</h2>
+        <p class="birthday-text">
+          Поздравляю тебя с Днём рождения! Хоть мы с тобой знакомы не так давно, ты уже стала для меня очень хорошим другом, с которой мне правда нравится проводить время. Оставайся такой же толстенькой, доброй, жизнерадостной, искренней и светлой. Пусть в твои 17 лет будет больше поводов улыбаться, спокойных и тёплых дней, классных людей рядом, неожиданных радостей и моментов, которые потом хочется вспоминать. Ты очень хороший человек, и я рад, что мы познакомились. С 17-летием! 🎂✨
+        </p>
+        <p class="postscript">⭐ P.S. Нажми 5 раз на подарок.</p>
+        <div class="secret-message" id="secretMessage" aria-live="polite">
+          Иногда самые ценные подарки — это люди, которые остаются рядом. Спасибо за твою дружбу. Пусть впереди будет ещё много счастливых моментов.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
