@@ -20,10 +20,12 @@ const state = {
   musicPlaying: false,
   musicGain: null,
   musicTimer: null,
+  catcherX: 0,
   easterClicks: 0,
   questStage: 1,
   nameIndex: 0,
   countdownTargetAt: null,
+  lastParallaxAt: 0,
   lastTrailAt: 0,
   openedWishes: new Set()
 };
@@ -232,6 +234,10 @@ function setupReveal() {
 
 function setupParallax() {
   window.addEventListener("pointermove", (event) => {
+    const now = performance.now();
+    if (state.gameRunning || now - state.lastParallaxAt < 32) return;
+    state.lastParallaxAt = now;
+
     const x = (event.clientX / window.innerWidth - 0.5) * 38;
     const y = (event.clientY / window.innerHeight - 0.5) * 38;
     document.documentElement.style.setProperty("--mx", `${x}px`);
@@ -285,7 +291,7 @@ function setupSpaceCanvas() {
 
     particles.length = 0;
     comets.length = 0;
-    const count = Math.min(230, Math.floor(width * height / 7400));
+    const count = Math.min(120, Math.floor(width * height / 12000));
     for (let i = 0; i < count; i += 1) {
       particles.push({
         x: Math.random() * width,
@@ -315,6 +321,11 @@ function setupSpaceCanvas() {
   }
 
   function draw() {
+    if (state.gameRunning) {
+      requestAnimationFrame(draw);
+      return;
+    }
+
     ctx.clearRect(0, 0, width, height);
     for (const particle of particles) {
       particle.y -= particle.speed;
@@ -324,13 +335,9 @@ function setupSpaceCanvas() {
         particle.x = Math.random() * width;
       }
 
-      const gradient = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, particle.size * 5);
-      gradient.addColorStop(0, `rgba(${particle.hue},${particle.alpha})`);
-      gradient.addColorStop(0.45, `rgba(249,197,255,${particle.alpha * 0.42})`);
-      gradient.addColorStop(1, "rgba(249,197,255,0)");
-      ctx.fillStyle = gradient;
+      ctx.fillStyle = `rgba(${particle.hue},${particle.alpha})`;
       ctx.beginPath();
-      ctx.arc(particle.x, particle.y, particle.size * 5, 0, Math.PI * 2);
+      ctx.arc(particle.x, particle.y, particle.size * 1.8, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -385,6 +392,7 @@ function moveCatcher(clientX) {
   const rect = stageRect();
   const half = dom.catcher.offsetWidth / 2;
   const localX = Math.max(half, Math.min(rect.width - half, clientX - rect.left));
+  state.catcherX = localX;
   dom.catcher.style.left = `${localX}px`;
 }
 
@@ -420,6 +428,7 @@ function startGame() {
   if (state.gameRunning) return;
   initAudio();
   state.gameRunning = true;
+  document.body.classList.add("game-running");
   dom.startButton.textContent = "Игра идет";
   dom.startButton.disabled = true;
   state.spawnTimer = window.setInterval(spawnItem, 620);
@@ -428,6 +437,7 @@ function startGame() {
 
 function stopGame() {
   state.gameRunning = false;
+  document.body.classList.remove("game-running");
   window.clearInterval(state.spawnTimer);
   cancelAnimationFrame(state.gameLoopId);
   state.spawnTimer = null;
@@ -449,7 +459,7 @@ function updateScore() {
 }
 
 function spawnItem() {
-  const rect = stageRect();
+  const stageWidth = dom.stage.clientWidth;
   const roll = Math.random();
   const type = roll < 0.46 ? "gift" : roll < 0.86 ? "star" : "empty";
   const element = document.createElement("div");
@@ -461,7 +471,7 @@ function spawnItem() {
   const item = {
     id,
     element,
-    x: Math.random() * Math.max(10, rect.width - 54),
+    x: Math.random() * Math.max(10, stageWidth - 54),
     y: -60,
     speed: type === "empty" ? 2.5 + Math.random() * 1.4 : 2.2 + Math.random() * 1.6,
     spin: Math.random() * 360,
@@ -469,28 +479,37 @@ function spawnItem() {
   };
 
   element.style.left = `${item.x}px`;
-  element.style.transform = `translateY(${item.y}px) rotate(${item.spin}deg)`;
+  element.style.transform = `translate3d(0, ${item.y}px, 0) rotate(${item.spin}deg)`;
   dom.stage.appendChild(element);
   state.activeItems.set(id, item);
 }
 
 function updateGame() {
-  const stage = stageRect();
-  const catcher = dom.catcher.getBoundingClientRect();
+  const stageHeight = dom.stage.clientHeight;
+  const catcherWidth = dom.catcher.offsetWidth;
+  const catcherHeight = dom.catcher.offsetHeight;
+  const catcherX = state.catcherX || dom.stage.clientWidth / 2;
+  const catcherLeft = catcherX - catcherWidth / 2;
+  const catcherRight = catcherX + catcherWidth / 2;
+  const catcherTop = stageHeight - 18 - catcherHeight;
+  const catcherBottom = stageHeight - 18;
 
   state.activeItems.forEach((item) => {
     item.y += item.speed;
     item.spin += item.type === "empty" ? 2.2 : 3.6;
-    item.element.style.transform = `translateY(${item.y}px) rotate(${item.spin}deg)`;
+    item.element.style.transform = `translate3d(0, ${item.y}px, 0) rotate(${item.spin}deg)`;
 
-    const itemRect = item.element.getBoundingClientRect();
-    const caught = itemRect.bottom > catcher.top
-      && itemRect.top < catcher.bottom
-      && itemRect.right > catcher.left
-      && itemRect.left < catcher.right;
+    const itemLeft = item.x;
+    const itemRight = item.x + 46;
+    const itemTop = item.y;
+    const itemBottom = item.y + 46;
+    const caught = itemBottom > catcherTop
+      && itemTop < catcherBottom
+      && itemRight > catcherLeft
+      && itemLeft < catcherRight;
 
     if (caught) collectItem(item);
-    if (item.y > stage.height + 80) removeItem(item);
+    if (item.y > stageHeight + 80) removeItem(item);
   });
 
   if (state.gameRunning) state.gameLoopId = requestAnimationFrame(updateGame);

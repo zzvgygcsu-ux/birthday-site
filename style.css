@@ -1303,6 +1303,7 @@ h2 {
   position: relative;
   height: clamp(390px, 58vh, 620px);
   overflow: hidden;
+  contain: layout paint;
   border-block: 1px solid rgba(255,236,249,0.16);
   background:
     radial-gradient(circle at 30% 20%, rgba(249, 197, 255, 0.26), transparent 24%),
@@ -1340,6 +1341,35 @@ h2 {
   box-shadow: 0 0 24px rgba(255,217,236,0.28), 0 0 42px rgba(249,197,255,0.16);
   font-size: 2rem;
   will-change: transform;
+  contain: layout paint;
+  transform: translate3d(0, 0, 0);
+}
+
+.game-running .space-canvas {
+  opacity: 0.18;
+}
+
+.game-running .world *,
+.game-running .game-wrap,
+.game-running .floating-decor,
+.game-running .hero-orbit {
+  animation-play-state: paused !important;
+}
+
+.game-running .game-stage {
+  backdrop-filter: none;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(249, 197, 255, 0.18), transparent 24%),
+    radial-gradient(circle at 80% 10%, rgba(255, 217, 236, 0.12), transparent 22%),
+    linear-gradient(180deg, rgba(44, 24, 66, 0.72), rgba(32, 17, 51, 0.62));
+}
+
+.game-running .falling-item {
+  box-shadow: 0 0 14px rgba(255,217,236,0.18);
+}
+
+.game-running .catcher {
+  transition: none;
 }
 
 .pop {
