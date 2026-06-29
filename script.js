@@ -1,8 +1,8 @@
 "use strict";
 
 const CONFIG = {
-  // Для проверки квеста таймер стартует заново при каждом открытии сайта.
-  countdownDurationMs: 10000,
+  // 30 июня, 00:00 по Москве.
+  birthdayAt: "2026-06-30T00:00:00+03:00",
   winningScore: 10,
   autoUnlockForPreview: false
 };
@@ -115,10 +115,7 @@ function setTimeValue(element, value) {
 
 function updateCountdown() {
   const now = Date.now();
-  if (!state.countdownTargetAt) {
-    state.countdownTargetAt = now + CONFIG.countdownDurationMs;
-  }
-  const target = state.countdownTargetAt;
+  const target = new Date(CONFIG.birthdayAt).getTime();
   const distance = target - now;
 
   if (distance <= 0 || CONFIG.autoUnlockForPreview) {
@@ -233,6 +230,8 @@ function setupReveal() {
 }
 
 function setupParallax() {
+  if (window.matchMedia("(pointer: coarse)").matches) return;
+
   window.addEventListener("pointermove", (event) => {
     const now = performance.now();
     if (state.gameRunning || now - state.lastParallaxAt < 32) return;
@@ -246,6 +245,8 @@ function setupParallax() {
 }
 
 function setupCursorTrail() {
+  if (window.matchMedia("(pointer: coarse)").matches) return;
+
   const symbols = ["♡", "♥", "✦", "✨"];
 
   window.addEventListener("pointermove", (event) => {
@@ -281,6 +282,8 @@ function setupSpaceCanvas() {
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const isSmallScreen = window.matchMedia("(max-width: 820px)").matches;
+    dpr = isSmallScreen ? 1 : dpr;
     width = window.innerWidth;
     height = window.innerHeight;
     canvas.width = Math.floor(width * dpr);
@@ -291,7 +294,9 @@ function setupSpaceCanvas() {
 
     particles.length = 0;
     comets.length = 0;
-    const count = Math.min(120, Math.floor(width * height / 12000));
+    const count = isSmallScreen
+      ? Math.min(55, Math.floor(width * height / 18000))
+      : Math.min(120, Math.floor(width * height / 12000));
     for (let i = 0; i < count; i += 1) {
       particles.push({
         x: Math.random() * width,
@@ -304,7 +309,8 @@ function setupSpaceCanvas() {
       });
     }
 
-    for (let i = 0; i < 3; i += 1) {
+    const cometCount = isSmallScreen ? 1 : 3;
+    for (let i = 0; i < cometCount; i += 1) {
       comets.push(resetComet({ delay: 260 + Math.random() * 900 }));
     }
   }
