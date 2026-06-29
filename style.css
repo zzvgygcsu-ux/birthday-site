@@ -735,11 +735,15 @@ h2 {
 .quest-progress span {
   display: grid;
   min-height: 38px;
+  padding: 0 8px;
   place-items: center;
   border-radius: 999px;
   color: rgba(255,246,252,0.66);
   font-size: clamp(0.72rem, 1.6vw, 0.9rem);
   font-weight: 850;
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
   transition: color 0.45s var(--ease), background 0.45s var(--ease), box-shadow 0.45s var(--ease), transform 0.45s var(--ease);
 }
 
@@ -2200,6 +2204,11 @@ h2 {
   .timer-card::after {
     opacity: 0.42;
     animation: none;
+  }
+
+  .timer-card::before {
+    inset: -8px;
+    filter: blur(14px);
   }
 
   .time-unit {
